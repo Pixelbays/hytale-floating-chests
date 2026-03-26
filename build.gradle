@@ -1,0 +1,94 @@
+plugins {
+    id 'java'
+    id 'org.jetbrains.gradle.plugin.idea-ext' version '1.3'
+}
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    hytaleHome = "${System.getProperty("user.home")}/AppData/Roaming/Hytale"
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(java_version)
+    withSourcesJar()
+    // Disable javadoc JAR due to NAS permission issues
+    // withJavadocJar()
+}
+
+// Disable sources jar generation due to unreadable paths on NAS
+tasks.named('sourcesJar') {
+    enabled = false
+}
+
+// Quiet warnings about missing Javadocs.
+javadoc {
+    options.addStringOption('Xdoclint:-missing', '-quiet')
+    enabled = false // Disable javadoc generation
+}
+
+// Adds the Hytale server as a build dependency, allowing you to reference and
+// compile against their code. This requires you to have Hytale installed using
+// the official launcher for now.
+dependencies {
+    implementation(files("$hytaleHome/install/$patchline/package/game/latest/Server/HytaleServer.jar"))
+    
+    // JUnit Jupiter for testing
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+// Create the working directory to run the server if it does not already exist.
+def serverRunDir = file("$projectDir/run")
+if (!serverRunDir.exists()) {
+    serverRunDir.mkdirs()
+}
+
+// Updates the manifest.json file with the latest properties defined in the
+// build.properties file. Currently we update the version and if packs are
+// included with the plugin.
+
+
+// Creates a run configuration in IDEA that will run the Hytale server with
+// your plugin and the default assets.
+idea.project.settings.runConfigurations {
+    'HytaleServer'(org.jetbrains.gradle.ext.Application) {
+        mainClass = 'com.hypixel.hytale.Main'
+        moduleName = project.idea.module.name + '.main'
+        programParameters = "--allow-op --assets=$hytaleHome/install/$patchline/package/game/latest/Assets.zip"
+        if (includes_pack.toBoolean()) {
+            programParameters += " --mods=${sourceSets.main.java.srcDirs.first().parentFile.absolutePath}"
+        }
+        if (load_user_mods.toBoolean()) {
+            programParameters += " --mods=$hytaleHome/UserData/Mods"
+        }
+        workingDirectory = serverRunDir.absolutePath
+    }
+}
+
+// Creates a Gradle task to run the Hytale server from the command line or VS Code.
+// Usage: ./gradlew runServer
+tasks.register('runServer', JavaExec) {
+    mainClass = 'com.hypixel.hytale.Main'
+    classpath = sourceSets.main.runtimeClasspath
+    args = ["--allow-op", "--assets=$hytaleHome/install/$patchline/package/game/latest/Assets.zip"]
+    if (includes_pack.toBoolean()) {
+        args += "--mods=${sourceSets.main.java.srcDirs.first().parentFile.absolutePath}"
+    }
+    if (load_user_mods.toBoolean()) {
+        args += "--mods=$hytaleHome/UserData/Mods"
+    }
+    if (asset_dir_pack_name != null && !asset_dir_pack_name.isEmpty()) {
+        args += "--mods=$projectDir/src/main/assetpacks/$asset_dir_pack_name"
+    }
+    println "Running Hytale server with arguments: ${args.join(' ')}"
+    workingDir = serverRunDir
+    standardInput = System.in
+}

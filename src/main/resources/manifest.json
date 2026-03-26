@@ -1,0 +1,22 @@
+{
+    "Group": "pixelbays",
+    "Name": "FloatingChest",
+    "Version": "0.0.2",
+    "Description": "Floating chests for Hytale",
+    "Authors": [
+        {
+            "Name": "It's you!"
+        }
+    ],
+    "Website": "example.org",
+    "ServerVersion": "2026.03.26-89796e57b",
+    "Dependencies": {
+        
+    },
+    "OptionalDependencies": {
+        
+    },
+    "DisabledByDefault": false,
+    "Main": "org.pixelbays.floatingchests.FloatingChests",
+    "IncludesAssetPack": true
+}

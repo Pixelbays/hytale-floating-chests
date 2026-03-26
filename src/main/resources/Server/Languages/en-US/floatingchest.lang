@@ -1,0 +1,17 @@
+command.summary = Floating chest support summary: automatic={automatic}, included={included}, excluded={excluded}, effective={effective}, applied={applied}
+command.include.help = Use /chestsupport include add <block_id> or /chestsupport include remove <block_id>
+command.include.added = Added {block} to the manual include list. Applied overrides: {patched}
+command.include.unchanged = {block} was already in the manual include list. Applied overrides: {patched}
+command.include.removed = Removed {block} from the manual include list. Applied overrides: {patched}
+command.include.not-present = {block} was not in the manual include list. Applied overrides: {patched}
+command.exclude.help = Use /chestsupport exclude add <block_id> or /chestsupport exclude remove <block_id>
+command.exclude.added = Added {block} to the manual exclude list. Applied overrides: {patched}
+command.exclude.unchanged = {block} was already in the manual exclude list. Applied overrides: {patched}
+command.exclude.removed = Removed {block} from the manual exclude list. Applied overrides: {patched}
+command.exclude.not-present = {block} was not in the manual exclude list. Applied overrides: {patched}
+command.list.summary = Floating chest support lists: automatic={automatic}, included={included}, excluded={excluded}, effective={effective}, applied={applied}
+command.list.includes = Included block ids: {blocks}
+command.list.excludes = Excluded block ids: {blocks}
+command.list.applied = Applied block ids: {blocks}
+command.status = Block {block}: exists={exists}, automatic={automatic}, included={included}, excluded={excluded}, effective={effective}, applied={applied}
+command.reapply = Rebuilt floating chest support overrides. Applied overrides: {patched}
